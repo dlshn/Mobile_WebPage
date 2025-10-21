@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatBot | Voiceflow</title>
+
+    <style>
+      body {
+        margin: 0;
+        background-color: #0b0b0b;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+
+      .chatbot-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .spinner {
+        border: 4px solid #333;
+        border-top: 4px solid #00bfff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error {
+        color: #ff5555;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="chatbot-container">
+      <div id="chatbot"></div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <h4>Please wait, loading chatbot...</h4>
+        <p style="color: #999;">This may take a few seconds</p>
+      </div>
+
+      <div id="error" class="error" style="display: none;">
+        Failed to load chat. Please try again later.
+      </div>
+    </div>
+
+    <script type="module">
+      const chatbotContainer = document.getElementById("chatbot");
+      const loading = document.getElementById("loading");
+      const error = document.getElementById("error");
+
+      const loadVoiceflow = () => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
+        script.type = "text/javascript";
+        script.async = true;
+
+        script.onload = () => {
+          loading.style.display = "none";
+          if (window.voiceflow && window.voiceflow.chat) {
+            window.voiceflow.chat.load({
+              verify: { projectID: "687bac72822de29a91abc9ee" },
+              url: "https://general-runtime.voiceflow.com",
+              versionID: "production",
+              voice: {
+                url: "https://runtime-api.voiceflow.com",
+              },
+              render: {
+                mode: "embedded",
+                target: chatbotContainer,
+              },
+            });
+          } else {
+            error.style.display = "block";
+          }
+        };
+
+        script.onerror = () => {
+          loading.style.display = "none";
+          error.style.display = "block";
+        };
+
+        document.body.appendChild(script);
+      };
+
+      setTimeout(loadVoiceflow, 1000);
+    </script>
+  </body>
+</html>
